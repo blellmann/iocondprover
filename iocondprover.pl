@@ -2,16 +2,25 @@
  * Theorem prover for I/O logics and conditional logics using sequents
 */
 
-/* Syntax for formulae:
+/* Syntax for formulae in the conditional language:
    Formulae are given by the grammar
      F ::= p | false | true | neg F | F and F | F or F | F -> F | F cimp F
    Here p is an arbitrary propositional variable (prolog term), neg is
    negation, and is conjunction, or is disjunction, -> is implication
    and cimp is the conditional implication.
 
+   Syntax for I/O tuples (a,x) is given by io(A,X) where A and X are
+   formulae without the io operator.
+
    Sequents are terms
      seq( Gamma, Delta )
    where Gamma and Delta are lists of formulae.
+
+   Implemented logics:
+     - out1 (simple-minded)
+     - out1id
+     - out3 (reusable)
+     - out3id
 */
 
 /* operator definitions etc */
@@ -26,6 +35,38 @@
   :- use_module(library(lists)).
 
 :- ensure_loaded([prettyprinting]).
+:- ensure_loaded([preprocessing]).
+
+
+/* prove_test /2
+*/
+prove_test(Logic,Formula) :-
+    preprocess(Formula,Formula1),!,
+    prove(Logic, seq([],[Formula1]), Derivation),!,
+    phrase(pp_output(Logic,Formula1,Derivation),L),
+    atomic_list_concat(L,L1),
+    open('output.tex',write,Stream),
+    write(Stream,L1),
+    close(Stream),!.
+
+
+/* ioprove /3
+   predicate to check derivability in the I/O logic language.
+   Assumptions is a list of I/O tuples io(A,B),...
+   Tuple is an I/O tuple io(A,B).
+*/
+ioprove(Logic,Assumptions,Tuple) :-
+    maplist(io_cond_conversion,Assumptions,Assumptions_cond),
+    maplist(preprocess,Assumptions_cond,Assumptions_cond_1),
+    io_cond_conversion(Tuple,Formula),
+    preprocess(Formula, Formula_1),!,
+    prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation),!,
+    phrase(pp_output(Logic,Formula_1,Derivation),L),
+    atomic_list_concat(L,L1),
+    open('output.tex',write,Stream),
+    write(Stream,L1),
+    close(Stream),!.
+    
 
 
 /* prove
@@ -67,8 +108,8 @@ prove(L, seq(Gamma,Delta), node(implR, seq(Gamma,Delta), [T] )) :-
 /* conjunction right */
 prove(L, seq(Gamma,Delta), node(andR, seq(Gamma,Delta), [T1,T2] )) :-
     select( A and B, Delta, Pi),
-    prove(L, seq(Gamma,[A,Pi]), T1),
-    prove(L, seq(Gamma,[B,Pi]), T2),!.
+    prove(L, seq(Gamma,[A|Pi]), T1),
+    prove(L, seq(Gamma,[B|Pi]), T2),!.
 /* disjunction left */
 prove(L, seq(Gamma,Delta), node(orL, seq(Gamma,Delta), [T1,T2] )) :-
     select(A or B, Gamma, Sigma),
@@ -89,18 +130,18 @@ prove(L, seq(Gamma,Delta), node(cimpR, seq(Gamma,Delta), [T] )) :-
     prove(L, cseq(Gamma,Pi,C cimp D,[]),T).
 /* conditional implication left for out1, out1id */
 prove(L, cseq(Gamma,Delta,C cimp D,Omega),
-      node(cimpL, cseq(Gamma,Delta, C cimp D, Omega), [T|Tree_list])) :-
+      node(cimpL, cseq(Gamma,Delta, C cimp D, Omega), [T,Tree2])) :-
     member(L,[out1,out1id]),
     select(A cimp B,Gamma,Sigma),
     prove(L, seq([C],[A]),T),
-    prove(L,cseq(Sigma,Delta,C cimp D, [B|Omega]), Tree_list).
+    prove(L,cseq(Sigma,Delta,C cimp D, [B|Omega]), Tree2).
 /* conditional implication left for out3, out3id */
 prove(L, cseq(Gamma,Delta,C cimp D,Omega),
-      node(cimpL, cseq(Gamma,Delta, C cimp D, Omega), [T|Tree_list])) :-
+      node(cimpL, cseq(Gamma,Delta, C cimp D, Omega), [T,Tree2])) :-
     member(L,[out3,out3id]),
     select(A cimp B,Gamma,Sigma),
     prove(L, seq([C|Omega],[A]),T),
-    prove(L,cseq(Sigma,Delta,C cimp D, [B|Omega]), Tree_list).
+    prove(L,cseq(Sigma,Delta,C cimp D, [B|Omega]), Tree2).
 /* jump rule for out1, out3*/
 prove(L, cseq(Gamma,Delta,C cimp D, Omega),
       node(jump, cseq(Gamma,Delta,C cimp D, Omega), [T])) :-
