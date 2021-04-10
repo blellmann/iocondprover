@@ -59,6 +59,7 @@ pp_logic(out1) --> ['\\out[1]'].
 pp_logic(out1id) --> ['\\out[1]^+'].
 pp_logic(out3) --> ['\\out[3]'].
 pp_logic(out3id) --> ['\\out[3]^+'].
+pp_logic(agg-out1) --> ['\\aggout[1]'].
 pp_logic(X) --> [X].
 
 
