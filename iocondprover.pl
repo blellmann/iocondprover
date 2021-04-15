@@ -150,6 +150,14 @@ prove(L, cseq(Gamma,Delta,C cimp D,Omega),
     prove(L, seq([C],[A]),T1),
     prove(L, seq([D],[B]),T2),
     prove(L,cseq(Sigma,Delta,C cimp D, [B|Omega]), Tree2).
+/* conditional implication left for agg-out3 */
+prove(L, cseq(Gamma,Delta,C cimp D,Omega),
+      node(cimpL, cseq(Gamma,Delta, C cimp D, Omega), [T1,T2,Tree2])) :-
+    member(L,[agg-out3]),
+    select(A cimp B,Gamma,Sigma),
+    prove(L, seq([C|Omega],[A]),T1),
+    prove(L, seq([D],[B]),T2),
+    prove(L,cseq(Sigma,Delta,C cimp D, [B|Omega]), Tree2).
 /* jump rule for out1, out3*/
 prove(L, cseq(Gamma,Delta,C cimp D, Omega),
       node(jump, cseq(Gamma,Delta,C cimp D, Omega), [T])) :-
@@ -160,8 +168,8 @@ prove(L, cseq(Gamma,Delta,C cimp D, Omega),
       node(jump, cseq(Gamma,Delta,C cimp D, Omega), [T])) :-
     member(L,[out1id,out3id]),
     prove(L, seq([C|Omega],[D]),T).
-/* jump rule for agg-out1 */
+/* jump rule for agg-out1, agg-out3 */
 prove(L, cseq(Gamma,Delta,C cimp D, [F|Omega]),
       node(jump, cseq(Gamma,Delta,C cimp D, [F|Omega]), [T])) :-
-    member(L,[agg-out1]),
+    member(L,[agg-out1,agg-out3]),
     prove(L, seq([F|Omega],[D]),T).

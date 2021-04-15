@@ -60,6 +60,7 @@ pp_logic(out1id) --> ['\\out[1]^+'].
 pp_logic(out3) --> ['\\out[3]'].
 pp_logic(out3id) --> ['\\out[3]^+'].
 pp_logic(agg-out1) --> ['\\aggout[1]'].
+pp_logic(agg-out3) --> ['\\aggout[3]'].
 pp_logic(X) --> [X].
 
 
@@ -122,7 +123,7 @@ pp_Seq(cseq(A,B, C cimp D, Omega)) -->
 pp_Seq_screen(seq(A,B)) -->
     [A],[' => '],[B].
 pp_Seq_screen(cseq(Gamma,Delta, C cimp D, Omega)) -->
-    [A], [' => '],[B], [' ; '],pp_Fml_screen(C cimp D), [' ; '],[Omega].
+    [Gamma], [' => '],[Delta], [' ; '],pp_Fml_screen(C cimp D), [' ; '],[Omega].
 		  
 /* pp_Fml_screen
    DCG for pretty printing a formula on the screen
