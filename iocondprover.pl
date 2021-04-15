@@ -21,6 +21,8 @@
      - out1id
      - out3 (reusable)
      - out3id
+     - agg-out1 (aggregative simple-minded)
+     - agg-out3 (aggregative reusable)
 */
 
 /* operator definitions etc */
@@ -36,6 +38,31 @@
 
 :- ensure_loaded([prettyprinting]).
 :- ensure_loaded([preprocessing]).
+
+
+/* prove_online /5
+   predicate called from web interface.
+*/
+prove_online(iologic,Logic,Tuple,Assumptions,Filename) :-
+    maplist(io_cond_conversion,Assumptions,Assumptions_cond),
+    maplist(preprocess,Assumptions_cond,Assumptions_cond_1),
+    io_cond_conversion(Tuple,Formula),
+    preprocess(Formula, Formula_1),!,
+    prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation),!,
+    phrase(pp_output(Logic,Formula_1,Derivation),L),
+    atomic_list_concat(L,L1),
+    open(Filename,write,Stream),
+    write(Stream,L1),
+    close(Stream),!.
+prove_online(condlogic,Logic,Tuple,Assumptions,Filename) :-
+    preprocess(Formula,Formula1),!,
+    prove(Logic, seq([],[Formula1]), Derivation),!,
+    phrase(pp_output(Logic,Formula1,Derivation),L),
+    atomic_list_concat(L,L1),
+    open(Filename,write,Stream),
+    write(Stream,L1),
+    close(Stream),!.
+    
 
 
 /* prove_test /2
