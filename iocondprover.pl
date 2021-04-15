@@ -54,7 +54,7 @@ prove_online(iologic,Logic,Tuple,Assumptions,Filename) :-
     open(Filename,write,Stream),
     write(Stream,L1),
     close(Stream),!.
-prove_online(condlogic,Logic,Tuple,Assumptions,Filename) :-
+prove_online(condlogic,Logic,Formula,_,Filename) :-
     preprocess(Formula,Formula1),!,
     prove(Logic, seq([],[Formula1]), Derivation),!,
     phrase(pp_output(Logic,Formula1,Derivation),L),
