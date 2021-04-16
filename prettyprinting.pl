@@ -5,8 +5,8 @@
 /* pp_output //3
    DCG for pretty printing the output
 */
-pp_output(Logic, Fml, Deriv) -->
-    pp_header(Logic,Fml),
+pp_output(Framework, Logic, Premisses, Fml, Deriv) -->
+    pp_header(Framework,Logic,Premisses,Fml),
     pp_nl_tab(0),
     ['\\['], pp_nl_tab(2),
     ['\\begin{adjustbox}{max width=\\textwidth}'],
@@ -22,13 +22,26 @@ pp_output(Logic, Fml, Deriv) -->
    DCG for pretty printing the latex header.
    Takes the logic and the input formulae as arguments.
 */
-pp_header(Logic,Fml) -->
+pp_header(condlogic,Logic,_,Fml) -->
     ['\\documentclass{article}'], pp_nl_tab(0),
     ['\\usepackage{header}'], pp_nl_tab(0),
     ['\\begin{document}'], pp_nl_tab(0),
     ['\\begin{center}'], pp_nl_tab(0),
     ['Logic: $'],
     pp_logic(Logic),['$\\\\'], pp_nl_tab(0),
+    ['Input formula: $'],
+    pp_Fml(Fml),
+    ['$'], pp_nl_tab(0),
+    ['\\end{center}'].
+pp_header(iologic,Logic,Assumptions,Fml) -->
+    ['\\documentclass{article}'], pp_nl_tab(0),
+    ['\\usepackage{header}'], pp_nl_tab(0),
+    ['\\begin{document}'], pp_nl_tab(0),
+    ['\\begin{center}'], pp_nl_tab(0),
+    ['Logic: $'],
+    pp_logic(Logic),['$\\\\'], pp_nl_tab(0),
+    ['Premisses: $'],
+    pp_Fml_list(Assumptions),['$\\\\'], pp_nl_tab(0),
     ['Input formula: $'],
     pp_Fml(Fml),
     ['$'], pp_nl_tab(0),

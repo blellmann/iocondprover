@@ -50,7 +50,7 @@ prove_online(iologic,Logic,Tuple,Assumptions,Filename) :-
     preprocess(Formula, Formula_1),!,
     (prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation)
      ; nonderivable(Derivation)),!,
-    phrase(pp_output(Logic,Formula_1,Derivation),L),
+    phrase(pp_output(iologic,Logic,Assumptions_cond_1,Formula_1,Derivation),L),
     atomic_list_concat(L,L1),
     open(Filename,write,Stream),
     write(Stream,L1),
@@ -59,7 +59,7 @@ prove_online(condlogic,Logic,Formula,_,Filename) :-
     preprocess(Formula,Formula1),!,
     (prove(Logic, seq([],[Formula1]), Derivation)
     ; nonderivable(Derivation)),!,
-    phrase(pp_output(Logic,Formula1,Derivation),L),
+    phrase(pp_output(condlogic,Logic,[],Formula1,Derivation),L),
     atomic_list_concat(L,L1),
     open(Filename,write,Stream),
     write(Stream,L1),
@@ -74,7 +74,7 @@ prove_test(Logic,Formula) :-
     preprocess(Formula,Formula1),!,
     (prove(Logic, seq([],[Formula1]), Derivation)
      ; nonderivable(Derivation)),!,
-    phrase(pp_output(Logic,Formula1,Derivation),L),
+    phrase(pp_output(condlogic,[],Logic,Formula1,Derivation),L),
     atomic_list_concat(L,L1),
     open('output.tex',write,Stream),
     write(Stream,L1),
@@ -93,7 +93,7 @@ ioprove(Logic,Assumptions,Tuple) :-
     preprocess(Formula, Formula_1),!,
     (prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation)
      ; nonderivable(Derivation)),!,
-    phrase(pp_output(Logic,Formula_1,Derivation),L),
+    phrase(pp_output(iologic,Logic,Assumptions_cond_1,Formula_1,Derivation),L),
     atomic_list_concat(L,L1),
     open('output.tex',write,Stream),
     write(Stream,L1),
