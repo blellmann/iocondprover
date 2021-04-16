@@ -48,7 +48,8 @@ prove_online(iologic,Logic,Tuple,Assumptions,Filename) :-
     maplist(preprocess,Assumptions_cond,Assumptions_cond_1),
     io_cond_conversion(Tuple,Formula),
     preprocess(Formula, Formula_1),!,
-    prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation),!,
+    (prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation)
+     ; nonderivable(Derivation)),!,
     phrase(pp_output(Logic,Formula_1,Derivation),L),
     atomic_list_concat(L,L1),
     open(Filename,write,Stream),
@@ -56,7 +57,8 @@ prove_online(iologic,Logic,Tuple,Assumptions,Filename) :-
     close(Stream),!.
 prove_online(condlogic,Logic,Formula,_,Filename) :-
     preprocess(Formula,Formula1),!,
-    prove(Logic, seq([],[Formula1]), Derivation),!,
+    (prove(Logic, seq([],[Formula1]), Derivation)
+    ; nonderivable(Derivation)),!,
     phrase(pp_output(Logic,Formula1,Derivation),L),
     atomic_list_concat(L,L1),
     open(Filename,write,Stream),
@@ -66,10 +68,12 @@ prove_online(condlogic,Logic,Formula,_,Filename) :-
 
 
 /* prove_test /2
+   For local proving in the conditional logic framework
 */
 prove_test(Logic,Formula) :-
     preprocess(Formula,Formula1),!,
-    prove(Logic, seq([],[Formula1]), Derivation),!,
+    (prove(Logic, seq([],[Formula1]), Derivation)
+     ; nonderivable(Derivation)),!,
     phrase(pp_output(Logic,Formula1,Derivation),L),
     atomic_list_concat(L,L1),
     open('output.tex',write,Stream),
@@ -87,7 +91,8 @@ ioprove(Logic,Assumptions,Tuple) :-
     maplist(preprocess,Assumptions_cond,Assumptions_cond_1),
     io_cond_conversion(Tuple,Formula),
     preprocess(Formula, Formula_1),!,
-    prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation),!,
+    (prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation)
+     ; nonderivable(Derivation)),!,
     phrase(pp_output(Logic,Formula_1,Derivation),L),
     atomic_list_concat(L,L1),
     open('output.tex',write,Stream),
@@ -200,3 +205,10 @@ prove(L, cseq(Gamma,Delta,C cimp D, [F|Omega]),
       node(jump, cseq(Gamma,Delta,C cimp D, [F|Omega]), [T])) :-
     member(L,[agg-out1,agg-out3]),
     prove(L, seq([F|Omega],[D]),T).
+
+
+
+/* nonderivable
+   to output that an input is not derivable.
+*/
+nonderivable(nonderivable).

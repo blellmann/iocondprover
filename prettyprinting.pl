@@ -47,11 +47,6 @@ pp_footer -->
 %%% End:'].
 
 
-/* pp_derivation
-   DCG for pretty printing a derivation tree in latex
-*/
-
-
 /* pp_logic //1
    DCG for pretty printing the logic
 */
@@ -177,6 +172,7 @@ pp_derivation_list_screen(N,[Der1,Der2|Tail]) -->
 /* pp_derivation
    DCG for pretty printing a derivation in latex
 */
+pp_derivation(N,nonderivable) --> pp_nl_tab(N), ['\\text{Input is not derivable}'].
 /*pp_derivation(latex,N,nonderivable) -->
     pp_nl_tab(N),['input is not derivable'].
 pp_derivation(latex,N,node(Rule_name, _, Seq, _)) -->
@@ -218,6 +214,8 @@ pp_derivation(N, node(Rule,Seq,Suc) ) -->
     pp_Seq(Seq),['}{'],
     pp_derivation_list(N+2,Suc),
     pp_nl_tab(N),['}'].
+
+
 
 
 /* pp_derivation_list
