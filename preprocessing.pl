@@ -18,6 +18,7 @@ added_at(neg(A),neg(B)) :- added_at(A,B).
 added_at(and(A,B),and(C,D)) :- added_at(A,C), added_at(B,D).
 added_at(or(A,B),or(C,D)) :- added_at(A,C), added_at(B,D).
 added_at(->(A,B), ->(C,D)) :- added_at(A,C), added_at(B,D).
+added_at(io(A,B), cimp(C,D)) :- added_at(A,C), added_at(B,D).
 added_at(cimp(A,B), cimp(C,D)) :- added_at(A,C), added_at(B,D).
 added_at(A,at(A)) :- atom(A).
 /*

@@ -44,10 +44,10 @@
    predicate called from web interface.
 */
 prove_online(iologic,Logic,Tuple,Assumptions,Filename) :-
-    maplist(io_cond_conversion,Assumptions,Assumptions_cond),
-    maplist(preprocess,Assumptions_cond,Assumptions_cond_1),
-    io_cond_conversion(Tuple,Formula),
-    preprocess(Formula, Formula_1),!,
+/*    maplist(io_cond_conversion,Assumptions,Assumptions_cond),*/
+    maplist(preprocess,Assumptions,Assumptions_cond_1),
+/*    io_cond_conversion(Tuple,Formula),*/
+    preprocess(Tuple, Formula_1),!,
     (prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation)
      ; nonderivable(Derivation)),!,
     phrase(pp_output(iologic,Logic,Assumptions_cond_1,Formula_1,Derivation),L),
@@ -87,10 +87,10 @@ prove_test(Logic,Formula) :-
    Tuple is an I/O tuple io(A,B).
 */
 ioprove(Logic,Assumptions,Tuple) :-
-    maplist(io_cond_conversion,Assumptions,Assumptions_cond),
-    maplist(preprocess,Assumptions_cond,Assumptions_cond_1),
-    io_cond_conversion(Tuple,Formula),
-    preprocess(Formula, Formula_1),!,
+/*    maplist(io_cond_conversion,Assumptions,Assumptions_cond),*/
+    maplist(preprocess,Assumptions,Assumptions_cond_1),
+/*    io_cond_conversion(Tuple,Formula),*/
+    preprocess(Tuple, Formula_1),!,
     (prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation)
      ; nonderivable(Derivation)),!,
     phrase(pp_output(iologic,Logic,Assumptions_cond_1,Formula_1,Derivation),L),
