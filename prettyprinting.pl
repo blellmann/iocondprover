@@ -28,10 +28,10 @@ pp_header(condlogic,Logic,_,Fml) -->
     ['\\begin{document}'], pp_nl_tab(0),
     ['\\begin{center}'], pp_nl_tab(0),
     ['Logic: $'],
-    pp_logic(Logic),['$\\\\'], pp_nl_tab(0),
+    pp_logic(Logic),['\\, $\\\\'], pp_nl_tab(0),
     ['Input formula: $'],
     pp_Fml(Fml),
-    ['$'], pp_nl_tab(0),
+    ['\\, $'], pp_nl_tab(0),
     ['\\end{center}'].
 pp_header(iologic,Logic,Assumptions,Fml) -->
     ['\\documentclass{article}'], pp_nl_tab(0),
@@ -39,12 +39,12 @@ pp_header(iologic,Logic,Assumptions,Fml) -->
     ['\\begin{document}'], pp_nl_tab(0),
     ['\\begin{center}'], pp_nl_tab(0),
     ['Logic: $'],
-    pp_logic(Logic),['$\\\\'], pp_nl_tab(0),
+    pp_logic(Logic),['\\, $\\\\'], pp_nl_tab(0),
     ['Premisses: $'],
-    pp_Fml_list(Assumptions),['$\\\\'], pp_nl_tab(0),
+    pp_Fml_list(Assumptions),['\\, $\\\\'], pp_nl_tab(0),
     ['Input formula: $'],
     pp_Fml(Fml),
-    ['$'], pp_nl_tab(0),
+    ['\\, $'], pp_nl_tab(0),
     ['\\end{center}'].
 
 
