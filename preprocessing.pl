@@ -42,3 +42,4 @@ added_at(Complex,at(Complex)) :-
    language
 */
 io_cond_conversion(io(A,B),cimp(A,B)).
+io_cond_conversion(A,A).
