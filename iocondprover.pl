@@ -74,7 +74,7 @@ prove_test(Logic,Formula) :-
     preprocess(Formula,Formula1),!,
     (prove(Logic, seq([],[Formula1]), Derivation)
      ; nonderivable(Derivation)),!,
-    phrase(pp_output(condlogic,[],Logic,Formula1,Derivation),L),
+    phrase(pp_output(condlogic,Logic,[],Formula1,Derivation),L),
     atomic_list_concat(L,L1),
     open('output.tex',write,Stream),
     write(Stream,L1),
@@ -110,9 +110,20 @@ prove(_, seq(Gamma,Delta), node(botL, seq(Gamma,Delta),[]) ) :-
     member(false,Gamma),!.
 prove(_, seq(Gamma,Delta), node(topR, seq(Gamma,Delta),[])) :-
     member(true,Delta),!.
-prove(_, seq(Gamma,Delta), node(init, seq(Gamma,Delta),[])) :-
+/* for logics without consistency constraints: use the generalised
+ * initial sequents to shorten derivations
+*/
+prove(Logic, seq(Gamma,Delta), node(init, seq(Gamma,Delta),[])) :-
+    \+ member(Logic,[c-agg-out1,c-agg-out3]),
     member(F,Gamma),
     member(F,Delta),!.
+/* for logics with consistency constraints: use initial sequents only
+ * on atomic formulae
+*/
+prove(Logic, seq(Gamma,Delta), node(init, seq(Gamma,Delta),[])) :-
+    member(Logic,[c-agg-out1,c-agg-out3]),
+    member(at(F),Gamma),
+    member(at(F),Delta),!.
 	   
 /* propositional connectives, one-premiss rules */
 /* negation left*/
@@ -169,23 +180,23 @@ prove(L, cseq(Gamma,Delta,C cimp D,Omega),
     prove(L,cseq(Sigma,Delta,C cimp D, [B|Omega]), Tree2).
 /* conditional implication left for out3, out3id */
 prove(L, cseq(Gamma,Delta,C cimp D,Omega),
-      node(cimpL, cseq(Gamma,Delta, C cimp D, Omega), [T,Tree2])) :-
+      node(cimpLreusbl, cseq(Gamma,Delta, C cimp D, Omega), [T,Tree2])) :-
     member(L,[out3,out3id]),
     select(A cimp B,Gamma,Sigma),
     prove(L, seq([C|Omega],[A]),T),
     prove(L,cseq(Sigma,Delta,C cimp D, [B|Omega]), Tree2).
-/* conditional implication left for agg-out1 (aggregative out1) */
+/* conditional implication left for agg-out1 (aggregative out1), c-agg-out1 */
 prove(L, cseq(Gamma,Delta,C cimp D,Omega),
-      node(cimpL, cseq(Gamma,Delta, C cimp D, Omega), [T1,T2,Tree2])) :-
-    member(L,[agg-out1]),
+      node(cimpLag, cseq(Gamma,Delta, C cimp D, Omega), [T1,T2,Tree2])) :-
+    member(L,[agg-out1,c-agg-out1]),
     select(A cimp B,Gamma,Sigma),
     prove(L, seq([C],[A]),T1),
     prove(L, seq([D],[B]),T2),
     prove(L,cseq(Sigma,Delta,C cimp D, [B|Omega]), Tree2).
-/* conditional implication left for agg-out3 */
+/* conditional implication left for agg-out3, c-agg-out3 */
 prove(L, cseq(Gamma,Delta,C cimp D,Omega),
-      node(cimpL, cseq(Gamma,Delta, C cimp D, Omega), [T1,T2,Tree2])) :-
-    member(L,[agg-out3]),
+      node(cimpLagreusbl, cseq(Gamma,Delta, C cimp D, Omega), [T1,T2,Tree2])) :-
+    member(L,[agg-out3, c-agg-out3]),
     select(A cimp B,Gamma,Sigma),
     prove(L, seq([C|Omega],[A]),T1),
     prove(L, seq([D],[B]),T2),
@@ -197,15 +208,21 @@ prove(L, cseq(Gamma,Delta,C cimp D, Omega),
     prove(L, seq(Omega,[D]),T).
 /* jump rule for out1id, out3id */
 prove(L, cseq(Gamma,Delta,C cimp D, Omega),
-      node(jump, cseq(Gamma,Delta,C cimp D, Omega), [T])) :-
+      node(jumpid, cseq(Gamma,Delta,C cimp D, Omega), [T])) :-
     member(L,[out1id,out3id]),
     prove(L, seq([C|Omega],[D]),T).
 /* jump rule for agg-out1, agg-out3 */
 prove(L, cseq(Gamma,Delta,C cimp D, [F|Omega]),
-      node(jump, cseq(Gamma,Delta,C cimp D, [F|Omega]), [T])) :-
+      node(jumpag, cseq(Gamma,Delta,C cimp D, [F|Omega]), [T])) :-
     member(L,[agg-out1,agg-out3]),
     prove(L, seq([F|Omega],[D]),T).
-
+/* jump rule for c-agg-out1, c-agg-out3 */
+prove(L, cseq(Gamma,Delta, C cimp D, [F|Omega]),
+      node(jumpcag, cseq(Gamma,Delta, C cimp D, [F|Omega])
+	   , [T,node(nonder, seq([C,D],[]),[])])) :-
+    member(L,[c-agg-out1, c-agg-out3]),
+    prove(L, seq([F|Omega],[D]), T),
+    \+ prove(L, seq([C,D],[]),_).
 
 
 /* nonderivable

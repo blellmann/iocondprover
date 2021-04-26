@@ -69,6 +69,8 @@ pp_logic(out3) --> ['\\out[3]'].
 pp_logic(out3id) --> ['\\out[3]^+'].
 pp_logic(agg-out1) --> ['\\aggout[1]'].
 pp_logic(agg-out3) --> ['\\aggout[3]'].
+pp_logic(c-agg-out1) --> ['\\caggout[1]'].
+pp_logic(c-agg-out3) --> ['\\caggout[3]'].
 pp_logic(X) --> [X].
 
 
@@ -119,10 +121,11 @@ pp_Seq(cseq(A,B, C cimp D, Omega)) -->
     pp_Fml_list(A),
     ['\\seq'],
     pp_Fml_list(B),
-    [' \\mid '],
+    [' [\\, '],
     pp_Fml(C cimp D),
-    [' \\mid '],
-    pp_Fml_list(Omega).
+    [' : '],
+    pp_Fml_list(Omega),
+    ['\\, ]'].
 
 
 /* pp_Seq_screen //2
@@ -219,6 +222,10 @@ pp_derivation(latex,N,node(mon(Op1,Op2),_,Seq,Suc)) -->
     pp_derivation_list(latex,N+2,Suc),
     pp_nl_tab(N),['}'].
 */
+pp_derivation(N, node(nonder, Seq,[])) -->
+    pp_nl_tab(N),
+    ['\\nentails '],
+    pp_Seq(Seq).
 pp_derivation(N, node(Rule,Seq,Suc) ) -->
     pp_nl_tab(N),
     ['\\infer[\\'],
