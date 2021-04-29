@@ -31,7 +31,6 @@
   :- op(600,xfy,or).
   :- op(700,xfy,->).
   :- op(750,xfy,cimp).
-%  :- op(800,xfy,=>).
 
 
   :- use_module(library(lists)).
@@ -44,9 +43,7 @@
    predicate called from web interface.
 */
 prove_online(iologic,Logic,Tuple,Assumptions,Filename) :-
-/*    maplist(io_cond_conversion,Assumptions,Assumptions_cond),*/
     maplist(preprocess,Assumptions,Assumptions_cond_1),
-/*    io_cond_conversion(Tuple,Formula),*/
     preprocess(Tuple, Formula_1),!,
     (prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation)
      ; nonderivable(Derivation)),!,
@@ -87,9 +84,7 @@ prove_test(Logic,Formula) :-
    Tuple is an I/O tuple io(A,B).
 */
 ioprove(Logic,Assumptions,Tuple) :-
-/*    maplist(io_cond_conversion,Assumptions,Assumptions_cond),*/
     maplist(preprocess,Assumptions,Assumptions_cond_1),
-/*    io_cond_conversion(Tuple,Formula),*/
     preprocess(Tuple, Formula_1),!,
     (prove(Logic, seq(Assumptions_cond_1,[Formula_1]), Derivation)
      ; nonderivable(Derivation)),!,
