@@ -21,26 +21,5 @@ added_at(->(A,B), ->(C,D)) :- added_at(A,C), added_at(B,D).
 added_at(io(A,B), cimp(C,D)) :- added_at(A,C), added_at(B,D).
 added_at(cimp(A,B), cimp(C,D)) :- added_at(A,C), added_at(B,D).
 added_at(A,at(A)) :- atom(A).
-/*
-added_at(A,at(A)) :-
-    A =.. [Var,_],
-    variable_with_arguments(Var).
-added_at(A,at(A)) :-
-    A =.. [Var|_],
-    variable_with_arguments(Var).
-added_at(A beats B, C beats D) :- added_at(A,C), added_at(B,D).
-added_at(seq(L,N), seq(Lat,Nat)) :-
-    maplist(added_at,L,Lat),
-    maplist(added_at,N,Nat).
-added_at(Complex,at(Complex)) :-
-    Complex =.. [Op|_],
-    variable_with_arguments(Op).
-*/
 
 
-/* io_cond_conversion
-   For converting from the I/O logic language to the conditional
-   language
-*/
-io_cond_conversion(io(A,B),cimp(A,B)).
-io_cond_conversion(A,A).
